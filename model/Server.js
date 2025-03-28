@@ -55,7 +55,7 @@ class Server {
   // //importar Rutas
   routes() {
     this.app.use(this.paths.usuarios, require("../routes/User"));
-    this.app.use(this.paths.digitaciones, require("../routes/digitacion"));
+    this.app.use(this.paths.digitaciones, require("../routes/Digitacion"));
     this.app.use(this.paths.asesores, require("../routes/Asesor"));
   }
 }
