@@ -2,9 +2,9 @@ const Firebird = require('node-firebird');
 
 // Configuración de la conexión
 const options = {
-    host: 'localhost',  // Cambia si tu Firebird está en otro servidor
+    host: '192.99.247.180',  // Cambia si tu Firebird está en otro servidor
     port: 3051,         // Puerto por defecto de Firebird
-    database: 'D:\\BD_CLIENTES\\BD COORSERPACK\\FUNERARIASGAS.FDB',  // Ruta a tu base de datos
+    database: 'C:\\Users\\Administrator\\Downloads\\FUNERARIASGAS.FDB',  // Ruta a tu base de datos
     user: 'SYSDBA',      // Usuario de Firebird
     password: 'masterkey',  // Contraseña
     lowercase_keys: false,  // Convierte claves a minúsculas en los resultados
