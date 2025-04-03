@@ -17,6 +17,9 @@ class Server {
       usuarios: "/api/users",
       digitaciones: "/api/digitacion",
       asesores: "/api/asesores",
+      directores: "/api/director",
+      convenios: "/api/convenios",
+      departamentos: "/api/departamentos"
     };
 
     this.middleware();
@@ -57,6 +60,9 @@ class Server {
     this.app.use(this.paths.usuarios, require("../routes/User"));
     this.app.use(this.paths.digitaciones, require("../routes/Digitacion"));
     this.app.use(this.paths.asesores, require("../routes/Asesor"));
+    this.app.use(this.paths.directores, require("../routes/Director"));
+    this.app.use(this.paths.convenios, require("../routes/Convenios"));
+    this.app.use(this.paths.departamentos, require("../routes/Departamentos"));
   }
 }
 //exportar
