@@ -19,7 +19,9 @@ class Server {
       asesores: "/api/asesores",
       directores: "/api/director",
       convenios: "/api/convenios",
-      departamentos: "/api/departamentos"
+      departamentos: "/api/departamentos",
+      empresas: "/api/empresas",
+      planes: "/api/plan"
     };
 
     this.middleware();
@@ -63,6 +65,8 @@ class Server {
     this.app.use(this.paths.directores, require("../routes/Director"));
     this.app.use(this.paths.convenios, require("../routes/Convenios"));
     this.app.use(this.paths.departamentos, require("../routes/Departamentos"));
+    this.app.use(this.paths.empresas, require("../routes/Empresas"));
+    this.app.use(this.paths.planes, require("../routes/Planes"));
   }
 }
 //exportar
