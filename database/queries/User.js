@@ -1,13 +1,16 @@
-const crypto = require('crypto');
-const pool = require('../config');
+const crypto = require("crypto");
+const pool = require("../config");
 
 const getUsersLogin = (username, password) => {
   return new Promise((resolve, reject) => {
     pool.get((err, db) => {
       if (err) return reject(err);
 
-      const sql = "SELECT * FROM tblusuarios WHERE username = ?";
-      db.query(sql, [username], async (err, result) => {
+      let sql =
+        "SELECT  u.username, u.pwduser password, u.idpersona, U.nombres, u.APELLIDOS, 0 renovarPass , U.ESTADO, '' cargo , u.usuariomodif, 200 codRespuesta, ";
+        sql = sql + " '' msjRespuesta, null IDVENDEDOR, null fechacreacion, U.pwdrol rol, null IDCAJA,  null CAJA, 30 cantidadLicencias, null fechaactualizacion, null uuid,  "
+        sql = sql +  " null subdominio FROM tblusuarios u  WHERE username = ?"
+        db.query(sql, [username], async (err, result) => {
         if (err) {
           db.detach();
           return reject(err);
@@ -18,11 +21,16 @@ const getUsersLogin = (username, password) => {
           return resolve(null); // Usuario no encontrado
         }
 
-        const storedPassword =  String( crypto.createHash('sha256').update(password).digest('hex').toUpperCase()).trim();
+        const storedPassword = String(
+          crypto
+            .createHash("sha256")
+            .update(password)
+            .digest("hex")
+            .toUpperCase()
+        ).trim();
 
-
-        if (storedPassword === result[0].PWDUSER) {
-          delete result[0].PWDUSER; // No devolver la contraseña
+        if (storedPassword === result[0].password) {
+          result[0].password = ""; // No devolver la contraseña
           db.detach();
           return resolve(result[0]);
         } else {
@@ -34,8 +42,7 @@ const getUsersLogin = (username, password) => {
   });
 };
 
-
-///usuario por username 
+///usuario por username
 const getUsername = (username) => {
   return new Promise((resolve, reject) => {
     pool.get((err, db) => {
@@ -47,14 +54,18 @@ const getUsername = (username) => {
           db.detach();
           return reject(err);
         }
+ 
         if (result.length === 0) {
-          delete result[0].PWDUSER; // No devolver la contraseña
+          db.detach();
+          return resolve(null); // Usuario no encontrado
+        }
+        if (result) {
+          delete result[0].pwduser; // No devolver la contraseña
           db.detach();
           return resolve(result[0]);
-      // 
-        }else{
-
-          return resolve({})
+          //
+        } else {
+          return resolve({});
         }
       });
     });

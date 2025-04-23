@@ -12,7 +12,7 @@ const auth = async (req = request, res = response) => {
         msg: "Usuario o contraseña inválidos",
       });
     }
-    const token = await generarJWT(user.USERNAME)
+    const token = await generarJWT(user.username)
     user.TOKEN = token
     return res.status(200).json({
       user,

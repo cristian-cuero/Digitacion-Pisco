@@ -9,7 +9,9 @@ const loadAllEmpresasq = async () => {
     pool.get((err, db) => {
       if (err) return reject(err);
       const sql =
-        `select e.nit , cast( e.empresa  AS VARCHAR(200) CHARACTER SET WIN1252) empresa from tblempresas e where e.estadoemp <>  'RETIRADO' order by e.empresa`;
+        ` select e.nitempresa idEmpresas , e.nit nitEmpresa , cast( e.empresa  AS VARCHAR(200) CHARACTER SET WIN1252) empresa, 
+        e.telefono telefono1, ''telefono2, cast( e.direccion AS VARCHAR(200) CHARACTER SET WIN1252), e.estadoemp estado , null usuario, 
+        null  usuariomodif  , 0 vtitular, 0 vadicional, 200 codRespuesta,  '' msjRespuesta,  '' subdominio from tblempresas e where e.estadoemp <>  'RETIRADO' order by e.empresa`;
       db.query(sql, [], (err, result) => {
         db.detach();
         if (err) return reject(err);

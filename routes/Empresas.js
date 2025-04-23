@@ -5,11 +5,12 @@ const { validarJWT } = require("../middleware/validarJWT");
 
 const router = new Router();
 
+router.get("/list", [validarJWT], loadAllEmpresas );
 
 router.get("/:nit", [validarJWT], loadEmpresasPlan );
 
 
-router.get("/", [validarJWT], loadAllEmpresas );
+
 
 
 
