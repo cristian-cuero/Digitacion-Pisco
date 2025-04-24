@@ -8,9 +8,9 @@ const {
 const loadAllEmpresas = async (req = request, res = response) => {
   try {
     const empresas = await loadAllEmpresasq();
-    return res.status(200).json({
-        empresas,
-    });
+    return res.status(200).json(
+       empresas,
+    );
   } catch (error) {
     console.log("error :>> ", error);
     return res.status(500).json({
@@ -26,7 +26,7 @@ const loadEmpresasPlan = async (req = request, res = response) => {
     console.log('req.params :>> ', req.params.nit);
     const planes = await loadAllPlanesEmprea(req.params.nit);
     return res.status(200).json({
-        planes,
+        ...planes,
     });
   } catch (error) {
     console.log("error :>> ", error);
