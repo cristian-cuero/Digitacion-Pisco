@@ -7,7 +7,7 @@ const getUsersLogin = (username, password) => {
       if (err) return reject(err);
 
       let sql =
-        "SELECT  u.username, u.pwduser password, u.idpersona, U.nombres, u.APELLIDOS, 0 renovarPass , U.ESTADO, '' cargo , u.usuariomodif, 200 codRespuesta, ";
+        "SELECT  u.username, u.pwduser password, u.idpersona, U.nombres nombre, u.APELLIDOS APELLIDO, 0 renovarPass , U.ESTADO, '' cargo , u.usuariomodif, 200 codRespuesta, ";
         sql = sql + " '' msjRespuesta, null IDVENDEDOR, null fechacreacion, U.pwdrol rol, null IDCAJA,  null CAJA, 30 cantidadLicencias, null fechaactualizacion, null uuid,  "
         sql = sql +  " null subdominio FROM tblusuarios u  WHERE username = ?"
         db.query(sql, [username], async (err, result) => {
