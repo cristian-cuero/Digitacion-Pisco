@@ -1,6 +1,7 @@
 //tabla de tbldigitaciones 
 
 //tabla asociada a tblaasesores
+const {  convertKeysToCamelCaseIfHasUnderscore } = require("../../helpers/ComelCase");
 const pool = require("../config");
 
 //carga Todas las empreas
@@ -9,13 +10,14 @@ const loadAllEmpresasq = async () => {
     pool.get((err, db) => {
       if (err) return reject(err);
       const sql =
-        ` select e.nitempresa idEmpresas , e.nit nitEmpresa , cast( e.empresa  AS VARCHAR(200) CHARACTER SET WIN1252) empresa, 
+        ` select e.nitempresa id_Empresas , e.nit nit_Empresa , cast( e.empresa  AS VARCHAR(200) CHARACTER SET WIN1252) empresa, 
         e.telefono telefono1, ''telefono2, cast( e.direccion AS VARCHAR(200) CHARACTER SET WIN1252), e.estadoemp estado , null usuario, 
-        null  usuariomodif  , 0 vtitular, 0 vadicional, 200 codRespuesta,  '' msjRespuesta,  '' subdominio from tblempresas e where e.estadoemp <>  'RETIRADO' order by e.empresa`;
+        null  usuariomodif  , 0 vtitular, 0 vadicional, 200 cod_Respuesta,  '' msj_Respuesta,  '' subdominio from tblempresas e where e.estadoemp <>  'RETIRADO' order by e.empresa`;
       db.query(sql, [], (err, result) => {
         db.detach();
+        const converted = result.map(row => convertKeysToCamelCaseIfHasUnderscore(row));
         if (err) return reject(err);
-        resolve(result);
+        resolve(converted);
       });
     });
   });
