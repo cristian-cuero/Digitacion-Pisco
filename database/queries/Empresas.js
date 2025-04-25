@@ -30,7 +30,9 @@ const loadAllPlanesEmprea = async (nit) => {
     pool.get((err, db) => {
       if (err) return reject(err);
       const sql =
-      `SELECT b.idplan, B.NOMBREPLAN FROM TBLRELEMPRESAPLAN A INNER JOIN tblplanes B ON A.idplan = B.idplan WHERE A.NIT = ?`;
+      `SELECT 1 idrelempresaplan, a.nit, b.idplan, a.idtipoplan, a.vtitular ,a.vadicional , p.nombre tipoPlan , B.NOMBREPLAN , null usuario, 
+      null usuariomodif, null codRespuesta,  null msjRespuesta, null subdominio FROM TBLRELEMPRESAPLAN A INNER JOIN tblplanes B ON A.idplan = B.idplan 
+      inner join tbltipoplan p on a.idtipoplan = p.idtipoplan WHERE A.NIT = ? order by p.nombre`;
       db.query(sql, [nit], (err, result) => {
         db.detach();
         if (err) return reject(err);
