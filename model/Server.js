@@ -16,10 +16,10 @@ class Server {
     this.paths = {
       usuarios: "/api/users",
       digitaciones: "/api/digitacion",
-      asesores: "/api/asesores",
+      asesores: "/api/employee",
       directores: "/api/director",
       convenios: "/api/convenios",
-      departamentos: "/api/departamentos",
+      departamentos: "/api/department",
       empresas: "/api/empresas",
       planes: "/api/plan"
     };

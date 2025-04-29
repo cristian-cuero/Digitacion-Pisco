@@ -27,10 +27,10 @@ const loadCiudades = async (req = request  , res =response )=> {
     try {
 
         
-        const ciudades =  await loadCiudadesDepartamento(req.params.CODDANE)
-        return res.status(200).json({
+        const ciudades =  await loadCiudadesDepartamento(req.query.codDepartamento)
+        return res.status(200).json(
             ciudades
-        })
+        )
     } catch (error) {
         console.log('error :>> ', error);
         return res.status(500).json({

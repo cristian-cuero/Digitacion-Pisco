@@ -7,6 +7,6 @@ const router = new Router();
 
 router.get("/", [validarJWT], loadDepartamentos );
 
-router.get("/:CODDANE", [validarJWT], loadCiudades );
+router.get("/cities", [validarJWT], loadCiudades );
 
 module.exports = router;
