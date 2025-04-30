@@ -30,13 +30,14 @@ const loadAllPlanesEmprea = async (nit) => {
     pool.get((err, db) => {
       if (err) return reject(err);
       const sql =
-      `SELECT 1 idrelempresaplan, a.nit, b.idplan, a.idtipoplan, a.vtitular ,a.vadicional , p.nombre tipoPlan , B.NOMBREPLAN , null usuario, 
-      null usuariomodif, null codRespuesta,  null msjRespuesta, null subdominio FROM TBLRELEMPRESAPLAN A INNER JOIN tblplanes B ON A.idplan = B.idplan 
+      `SELECT  b.idplan id, b.idplan id_plan,  B.NOMBREPLAN NOMBRE_PLAN , 0 estado,  a.vtitular valor_Base ,a.vadicional valor_Adicional, 0 nropersonas , 0 nropersonasadicionales , 1 aceptaadicional ,
+      0 edadmaximaadic ,p.idtipoplan , p.nombre  tipoplan,  null cod_Respuesta,  null msj_Respuesta, null subdominio FROM TBLRELEMPRESAPLAN A INNER JOIN tblplanes B ON A.idplan = B.idplan 
       inner join tbltipoplan p on a.idtipoplan = p.idtipoplan WHERE A.NIT = ? order by p.nombre`;
       db.query(sql, [nit], (err, result) => {
         db.detach();
+        const respuesta = result.map(row => convertKeysToCamelCaseIfHasUnderscore(row));
         if (err) return reject(err);
-        resolve(result);
+        resolve(respuesta);
       });
     });
   });
