@@ -7,9 +7,9 @@ const loadDepartamentos = async (req = request  , res =response )=> {
 
     try {
         const departamentos =  await loadDepartamentosq()
-        return res.status(200).json({
+        return res.status(200).json(
             departamentos
-        })
+        )
     } catch (error) {
         console.log('error :>> ', error);
         return res.status(500).json({
