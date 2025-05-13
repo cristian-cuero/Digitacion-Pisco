@@ -23,8 +23,14 @@ const loadAllEmpresas = async (req = request, res = response) => {
 const loadEmpresasPlan = async (req = request, res = response) => {
   try {
 
-    console.log('req.params :>> ', req.params.nit);
-    const planes = await loadAllPlanesEmprea(req.params.nit);
+
+    console.log('req.query; :>> ', req.query);
+    const { nit, idplan } = req.query;
+    if (!nit & !idplan) {
+      return res.status(400).json({ error: "Faltan parámetros: nit o plan" });
+    }
+
+    const planes = await loadAllPlanesEmprea(nit, idplan);
     return res.status(200).json(
         planes,
     );
