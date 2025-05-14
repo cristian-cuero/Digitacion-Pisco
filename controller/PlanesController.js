@@ -8,9 +8,9 @@ const loadParentescoPlan = async (req = request  , res =response )=> {
 
     try {
         const convenios =  await loadParentescoPlanesq(req.params.idplan)
-        return res.status(200).json({
-            convenios
-        })
+        return res.status(200).json(
+            Object.values(convenios)
+        )
     } catch (error) {
         console.log('error :>> ', error);
         return res.status(500).json({

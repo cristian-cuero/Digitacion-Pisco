@@ -17,7 +17,6 @@ const validarAfiliacion = [
   check("TIPOVIVIENDA").notEmpty().withMessage("Debes De Ingresar Una Vivienda"),
   check("FECHANACIMIENTO").notEmpty().withMessage("La Cedula es obligatorio")
   .isDate({ format: 'YYYY/MM/DD' }).withMessage("Debe Ser Una Fecha Valida"),
-  check("BARRIO").notEmpty().withMessage("Debes De Ingresar Una El Barrio"),
   check("IDDIRECTOR").notEmpty().withMessage("Debes De Ingresar Una El Supervisor"),
   check("DEPARTAMENTO").notEmpty().withMessage("Debes De Ingresar El Departamento"),
   check("CIUDAD").notEmpty().withMessage("Debes De Ingresar la Ciudad"),
