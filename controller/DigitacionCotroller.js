@@ -8,7 +8,7 @@ const crearDigitacion = async (req = request, res = response) => {
   try {
      const respuesta = await insertarDigitacion(data)
     let arrayDeArrays 
-    if(!respuesta.msg){
+    if(!respuesta.msg &  data.benefeci){
       if (data.benefeci.length > 0){
         const ordenColumnas = ["NOMBRES", "APELLIDOS", "IDPARENTESCO", "EDAD", "USUARIO", "PROCESADO", "NITEMPRESA", "ADICIONAL", "VALORADICIONAL"];
          arrayDeArrays = data.benefeci.map(obj => [...ordenColumnas.map(col => obj[col]), respuesta.IDDIGITACION, respuesta.CODIGOAFILIACION]);
