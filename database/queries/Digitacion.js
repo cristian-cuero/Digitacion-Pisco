@@ -1,4 +1,4 @@
-const Firebird = require('node-firebird');
+const Firebird = require("node-firebird");
 const pool = require("../config");
 const { finalizarTransaccion } = require("../db");
 
@@ -105,7 +105,11 @@ async function insertarDigitacion(data) {
         db.detach();
         if (err) {
           if (err.gdscode === 335544665) {
-            return reject({ msg: "Ya se Encuentra registrado Este Cliente" });
+            return reject({
+              msg: "Ya se Encuentra registrado Este Cliente",
+              iddigitacion: 0,
+              codigoafiliacion: "0",
+            });
           }
           return reject(err);
         }
@@ -147,8 +151,14 @@ async function insertarDigitacionBeneficiario(data = []) {
 
             // Solo finaliza la transacción cuando todas las consultas han terminado
             if (pendingQueries === 0) {
-             const data =  finalizarTransaccion(transaction, db, errorFlag, resolve, reject);
-             console.log('data :>> ', data);
+              const data = finalizarTransaccion(
+                transaction,
+                db,
+                errorFlag,
+                resolve,
+                reject
+              );
+              console.log("data :>> ", data);
             }
           });
         });
@@ -156,6 +166,5 @@ async function insertarDigitacionBeneficiario(data = []) {
     });
   });
 }
-
 
 module.exports = { insertarDigitacion, insertarDigitacionBeneficiario };
