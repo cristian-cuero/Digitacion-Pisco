@@ -14,7 +14,7 @@ const dbConnections = async () => {
   });
 };
 
-function finalizarTransaccion(transaction, db, errorFlag, resolve, reject) {
+function finalizarTransaccion(transaction, db, errorFlag, resolve, reject, insertedIds) {
   if (errorFlag) {
     transaction.rollback(() => {
       db.detach();
@@ -24,7 +24,7 @@ function finalizarTransaccion(transaction, db, errorFlag, resolve, reject) {
     transaction.commit((err) => {
       db.detach();
       if (err) return reject(err);
-      resolve("Inserción completada con éxito");
+      resolve(insertedIds);
     });
   }
 }

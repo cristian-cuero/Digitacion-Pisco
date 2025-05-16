@@ -38,9 +38,9 @@ async function insertarDigitacion(data) {
             OBSERVACIONES, DIRECCIONANT,BARRIO,MAIL,TIENEIMAGEN,MESESGRATIS,FUNANTERIOR,IDDIRECTOR,CEDULACONTACTO,
             NOMBRECONTACTO,TELEFONOCONTACTO,DIRECCIONCONTACTO,CIUDADCONTACTO,FNACIMIENTOCONTACTO,EDADCONTACTO,
             TIPOVIVIENDACONTACTO,NOMBREREFERIDO,TELEFONOREFERIDO,NOMBREREFERIDOONE,TELEFONOREFERIDOONE,CUOTAS,
-            VALORCTOPOST,REACTIVACION,USUARIOREGISTRO) VALUES (? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? 
+            VALORCTOPOST,REACTIVACION,USUARIOREGISTRO,digitacionCall) VALUES (? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? 
             ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,? ,?
-           ,? ,? ,? ,? ,? ,? )  RETURNING IDDIGITACION,CODIGOAFILIACION 
+           ,? ,? ,? ,? ,? ,?,? )  RETURNING IDDIGITACION,CODIGOAFILIACION 
           `;
 
       const values = [
@@ -99,6 +99,7 @@ async function insertarDigitacion(data) {
         data.VALORCTOPOST,
         data.REACTIVACION,
         data.USUARIOREGISTRO,
+        1
       ];
 
       db.query(sql, values, (err, result) => {
@@ -135,17 +136,25 @@ async function insertarDigitacionBeneficiario(data = []) {
         const sql = `INSERT INTO TBLBDIGITACIONUNO 
           (NOMBRES, APELLIDOS, IDPARENTESCO, EDAD, USUARIO, PROCESADO, 
           NITEMPRESA, ADICIONAL, VALORADICIONAL, IDDIGITACION, CODIGOAFILIACION) 
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)  RETURNING CEDULA `;
 
         let errorFlag = false;
         let pendingQueries = data.length;
+        let insertedIds = [];
 
         data.forEach((dato, index) => {
-          transaction.query(sql, dato, (err) => {
+          transaction.query(sql, dato, (err, result) => {
             if (err) {
               console.error(`Error en la fila ${index}:`, err);
               errorFlag = true;
             }
+            else {
+              // result contiene el valor devuelto por RETURNING
+              if (result ) {
+                insertedIds[index] = result.cedula; 
+              }
+            }
+
 
             pendingQueries--;
 
@@ -156,7 +165,8 @@ async function insertarDigitacionBeneficiario(data = []) {
                 db,
                 errorFlag,
                 resolve,
-                reject
+                reject,
+                insertedIds
               );
               console.log("data :>> ", data);
             }
@@ -167,4 +177,37 @@ async function insertarDigitacionBeneficiario(data = []) {
   });
 }
 
-module.exports = { insertarDigitacion, insertarDigitacionBeneficiario };
+
+const ExisteDigitacion = async (id = 0) => {
+  return new Promise((resolve, reject) => {
+    pool.get((err, db) => {
+      if (err) return reject(err);
+      let sql = "select  d.iddigitacion, d.codigoafiliacion from TBLTDIGITACIONUNO d where d.iddigitacion = ?";
+      db.query(sql, [id], (err, result) => {
+        db.detach();
+        if (err) return reject(err);
+         resolve (result)
+        
+      });
+    });
+  });
+
+}
+
+//eliminar Beneficiario
+async function EliminarBeneficiario(Datos) {
+  return new Promise((resolve, reject) => {
+    pool.get((err, db) => {
+      if (err) return reject(err);
+      let sql = "DELETE FROM TBLBDIGITACIONUNO WHERE IDDIGITACION= ? AND CEDULA=?";
+      db.query(sql,Datos, (err, result) => {
+        db.detach();
+        if (err) return reject(err);
+        resolve(true);
+      });
+    });
+  });
+}
+
+
+module.exports = { insertarDigitacion, insertarDigitacionBeneficiario , ExisteDigitacion,EliminarBeneficiario };
