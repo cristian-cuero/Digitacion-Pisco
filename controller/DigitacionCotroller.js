@@ -47,6 +47,8 @@ const crearDigitacion = async (req = request, res = response) => {
     console.log("error :>> ", error);
     return res.status(500).json({
       msg: error,
+      iddigitacion:0,
+      codigoafiliacion:0
     });
   }
 
