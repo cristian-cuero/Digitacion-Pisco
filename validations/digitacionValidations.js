@@ -40,41 +40,35 @@ const validarAfiliacionBenefi = [
     .withMessage("El Código de Afiliación es obligatorio")
     .isNumeric()
     .withMessage("El Código de Afiliación debe ser numérico"),
-
-  // Validar arreglo de beneficiarios
-  check("beneficiarios")
-    .isArray({ min: 1 })
-    .withMessage("Debe enviar al menos un beneficiario"),
-
-  check("beneficiarios.*.NOMBRES")
+  check("NOMBRES")
     .notEmpty()
     .withMessage("El Nombre del beneficiario es obligatorio"),
 
-  check("beneficiarios.*.APELLIDOS")
+  check("APELLIDOS")
     .notEmpty()
     .withMessage("El Apellido del beneficiario es obligatorio"),
 
-  check("beneficiarios.*.IDPARENTESCO")
+  check("IDPARENTESCO")
     .notEmpty()
     .withMessage("El Parentesco del beneficiario es obligatorio"),
 
-  check("beneficiarios.*.NITEMPRESA")
+  check("NITEMPRESA")
     .notEmpty()
     .withMessage("La Empresa del beneficiario es obligatoria"),
 
-  check("beneficiarios.*.USUARIO")
+  check("USUARIO")
     .notEmpty()
     .withMessage("El Usuario del beneficiario es obligatorio"),
 
-  check("beneficiarios.*.PROCESADO")
+  check("PROCESADO")
     .isIn([0, 1])
     .withMessage("El campo PROCESADO debe ser 0 o 1"),
 
-  check("beneficiarios.*.ADICIONAL")
+  check("ADICIONAL")
     .notEmpty()
     .withMessage("El campo ADICIONAL es obligatorio"),
 
-  check("beneficiarios.*.VALORADICIONAL")
+  check("VALORADICIONAL")
     .isNumeric()
     .withMessage("VALORADICIONAL debe ser un número"),
 ];

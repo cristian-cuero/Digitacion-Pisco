@@ -1,6 +1,5 @@
-const e = require("express");
+
 const { response, request } = require("express");
-const { jsbn } = require("node-forge");
 const {
   insertarDigitacion,
   insertarDigitacionBeneficiario,
@@ -57,7 +56,9 @@ const crearDigitacion = async (req = request, res = response) => {
 
 //Crear Beneficiario En Digitacion
 const crearDigitacionBenefi = async (req = request, res = response) => {
-  const { Codigoafiliacion, beneficiarios } = req.body;
+  const { Codigoafiliacion, ...beneficiario } = req.body;
+
+  const beneficiarios = [beneficiario]
   try {
     const respuesta = await ExisteDigitacion(Codigoafiliacion);
 
