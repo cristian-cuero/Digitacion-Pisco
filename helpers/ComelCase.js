@@ -17,9 +17,14 @@ function convertKeysToCamelCaseIfHasUnderscore(obj) {
     }
     return newObj;
   }
+  function getValueByInsensitiveKey(obj, key) {
+    const foundKey = Object.keys(obj).find(k => k.toLowerCase() === key.toLowerCase());
+    return foundKey ? obj[foundKey] : undefined;
+  }
 
 
   module.exports = {
-    convertKeysToCamelCaseIfHasUnderscore
+    convertKeysToCamelCaseIfHasUnderscore,
+    getValueByInsensitiveKey
   }
   

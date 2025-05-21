@@ -46,7 +46,7 @@ const loadAllPlanesEmprea = async (nit, idplan) => {
         WHERE A.NIT =  ? and a.idplan = ? `
         params.push(idplan)
       }
-      console.log('sql :>> ', sql);
+
      
       db.query(sql, params, (err, result) => {
         db.detach();
