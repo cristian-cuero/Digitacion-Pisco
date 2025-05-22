@@ -31,6 +31,9 @@ const validarAfiliacion = [
     .notEmpty()
     .withMessage("Debes De Ingresar El Departamento"),
   check("CIUDAD").notEmpty().withMessage("Debes De Ingresar la Ciudad"),
+  check("TELEFONOREFERIDO").optional() // permite que esté ausente o vacío
+  .isString().withMessage("El teléfono debe ser una cadena"),
+  
 ];
 
 const validarAfiliacionBenefi = [

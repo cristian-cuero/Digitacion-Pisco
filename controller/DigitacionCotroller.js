@@ -44,8 +44,10 @@ const crearDigitacion = async (req = request, res = response) => {
     });
   } catch (error) {
     console.log("error :>> ", error);
+    const mensaje = error.msg ? error.msg : "Error Al Crear La Digitacion";
     return res.status(500).json({
-      msg: error,
+      msg: mensaje ,
+      msg2: error,
       iddigitacion:0,
       codigoafiliacion:0
     });
