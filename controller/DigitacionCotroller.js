@@ -1,10 +1,10 @@
-
-const { response, request } = require("express");
+const { response, request, json } = require("express");
 const {
   insertarDigitacion,
   insertarDigitacionBeneficiario,
   ExisteDigitacion,
   EliminarBeneficiario,
+  BuscarContratos,
 } = require("../database/queries/Digitacion");
 const ordenColumnas = [
   "NOMBRES",
@@ -46,10 +46,10 @@ const crearDigitacion = async (req = request, res = response) => {
     console.log("error :>> ", error);
     const mensaje = error.msg ? error.msg : "Error Al Crear La Digitacion";
     return res.status(500).json({
-      msg: mensaje ,
+      msg: mensaje,
       msg2: error,
-      iddigitacion:0,
-      codigoafiliacion:0
+      iddigitacion: 0,
+      codigoafiliacion: 0,
     });
   }
 
@@ -58,11 +58,11 @@ const crearDigitacion = async (req = request, res = response) => {
 
 //Crear Beneficiario En Digitacion
 const crearDigitacionBenefi = async (req = request, res = response) => {
-  const { Codigoafiliacion, ...beneficiario } = req.body;
+  const { idDigitacion, ...beneficiario } = req.body;
 
-  const beneficiarios = [beneficiario]
+  const beneficiarios = [beneficiario];
   try {
-    const respuesta = await ExisteDigitacion(Codigoafiliacion);
+    const respuesta = await ExisteDigitacion(idDigitacion);
 
     if (respuesta.length > 0) {
       arrayDeArrays = beneficiarios.map((obj) => [
@@ -77,7 +77,7 @@ const crearDigitacionBenefi = async (req = request, res = response) => {
       });
     }
     return res.status(400).json({
-      msg: "No Se Encuentra La Afiliacion " + Codigoafiliacion,
+      msg: "No Se Encuentra La Afiliacion " + idDigitacion,
     });
   } catch (error) {
     res.status(500).json({
@@ -123,4 +123,37 @@ const eliminarBenefi = async (req = request, res = response) => {
     });
   }
 };
-module.exports = { crearDigitacion, crearDigitacionBenefi, eliminarBenefi };
+
+//buscarBeneficiario
+
+const searchBenefi = async (req = request, res = response) => {
+  try {
+    const {
+      desde  ,
+      hasta ,
+      cedula ,
+      contrato, 
+      empresa,
+    } = req.query;
+
+    const contratos = await BuscarContratos([desde,hasta,cedula,contrato, empresa])
+
+    return res.status(200).json(
+      contratos
+    )
+  } catch (error) {
+    return (
+      res.status(500).
+      json({
+        msg: "Se Presento Un rro Buscando Las Afiliaciones",
+        msg2: error.message,
+      })
+    );
+  }
+};
+module.exports = {
+  crearDigitacion,
+  crearDigitacionBenefi,
+  eliminarBenefi,
+  searchBenefi,
+};

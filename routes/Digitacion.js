@@ -1,8 +1,8 @@
 const { Router } = require('express');
-const { crearDigitacion, crearDigitacionBenefi, eliminarBenefi } = require('../controller/DigitacionCotroller');
+const { crearDigitacion, crearDigitacionBenefi, eliminarBenefi, searchBenefi } = require('../controller/DigitacionCotroller');
 const { validarCampos } = require('../middleware/validarcampos');
 const { validarJWT } = require('../middleware/validarJWT');
-const { validarAfiliacion, validarAfiliacionBenefi } = require('../validations/digitacionValidations');
+const { validarAfiliacion, validarAfiliacionBenefi, validarBusqueda } = require('../validations/digitacionValidations');
 
 const router = new Router();
 
@@ -28,6 +28,16 @@ router.post('/createBenefi' ,[
 router.delete('/deleteBenefi/' , [
     validarJWT,
 ], eliminarBenefi)
+
+
+
+//buscar Digitaciones
+
+router.get('/searchBenefi/' , [
+    validarJWT,
+    validarBusqueda,
+    validarCampos
+], searchBenefi)
 
 
 

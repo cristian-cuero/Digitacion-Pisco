@@ -2,9 +2,9 @@ class Departamento {
   constructor(
     codDepartamento,
     departamento,
-    codRespuesta,
-    msjRespuesta,
-    subdominio
+    codRespuesta = null,
+    msjRespuesta = null,
+    subdominio = null
   ) {
     this.codDepartamento = codDepartamento;
     this.departamento = departamento;

@@ -1,6 +1,7 @@
 const Firebird = require("node-firebird");
 const pool = require("../config");
 const { finalizarTransaccion } = require("../db");
+const { ejecutarConsulta } = require("../ObtenerPool");
 
 // Obtener nuevo ID desde el procedimiento almacenado
 async function obtenerNuevoId(titular = true) {
@@ -210,4 +211,17 @@ async function EliminarBeneficiario(Datos) {
 }
 
 
-module.exports = { insertarDigitacion, insertarDigitacionBeneficiario , ExisteDigitacion,EliminarBeneficiario };
+//buscar  digitaciones 
+async function BuscarContratos(Datos) {
+   
+
+  console.log('Datos :>> ', Datos);
+  const params = ['2025-05-01', '2025-05-31'];
+  //mejora Reutilzar Los Pool Para No Hacerlo Siempre Da Pereza Luego Se Remplza para los demas 
+  const sql = "SELECT * FROM PRC_BUSQUEDA_DIGITACION(?, ?, ?, ?, ?)"
+  const respuesta  = await ejecutarConsulta(sql , Datos)
+
+  return respuesta
+}
+
+module.exports = { insertarDigitacion, insertarDigitacionBeneficiario , ExisteDigitacion,EliminarBeneficiario, BuscarContratos };

@@ -10,6 +10,7 @@ const options = {
     lowercase_keys: true,  // Convierte claves a minúsculas en los resultados
     role: null,           // Si usas roles en Firebird, agrégalo aquí
     pageSize: 4096 ,       // Tamaño de página (puede variar según tu configuración)
+    
 };
 
 // Crear un pool de conexiones para reutilizar conexiones abiertas
