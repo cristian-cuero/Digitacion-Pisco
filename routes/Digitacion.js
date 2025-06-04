@@ -1,5 +1,6 @@
 const { Router } = require('express');
-const { crearDigitacion, crearDigitacionBenefi, eliminarBenefi, searchBenefi } = require('../controller/DigitacionCotroller');
+const {query} = require("express-validator");
+const { crearDigitacion, crearDigitacionBenefi, eliminarBenefi, searchBenefi, searchBenefiB } = require('../controller/DigitacionCotroller');
 const { validarCampos } = require('../middleware/validarcampos');
 const { validarJWT } = require('../middleware/validarJWT');
 const { validarAfiliacion, validarAfiliacionBenefi, validarBusqueda } = require('../validations/digitacionValidations');
@@ -38,6 +39,15 @@ router.get('/searchBenefi/' , [
     validarBusqueda,
     validarCampos
 ], searchBenefi)
+
+//buscarBeneficiario
+router.get('/searchBenefiB/' , [
+    validarJWT,
+    query("iddigitacion")
+     .isNumeric()
+    .withMessage("El iddigitcion debe ser numerico"),
+    validarCampos
+], searchBenefiB)
 
 
 

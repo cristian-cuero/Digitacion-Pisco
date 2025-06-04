@@ -1,7 +1,8 @@
 class Plan {
     constructor(data = {}) {
-      this.id = data.id || null;
-      this.nombrePlan = data.nombrePlan || '';
+      this.id = data.idplan || null;
+      this.idtipoplan = data.idplan || null;
+      this.nombrePlan = data.nombreplan || '';
       this.valorBase = data.valorBase || 0;
     }
   }

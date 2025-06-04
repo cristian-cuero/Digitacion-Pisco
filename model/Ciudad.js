@@ -11,4 +11,4 @@ class Municipio {
   }
 }
 
-module.exports = Municipio;
+module.exports = {Municipio};

@@ -1,4 +1,5 @@
 const Firebird = require("node-firebird");
+const { convertKeysToCamelCaseIfHasUnderscore } = require("../../helpers/ComelCase");
 const pool = require("../config");
 const { finalizarTransaccion } = require("../db");
 const { ejecutarConsulta } = require("../ObtenerPool");
@@ -100,7 +101,7 @@ async function insertarDigitacion(data) {
         data.VALORCTOPOST,
         data.REACTIVACION,
         data.USUARIOREGISTRO,
-        1
+        1,
       ];
 
       db.query(sql, values, (err, result) => {
@@ -148,14 +149,12 @@ async function insertarDigitacionBeneficiario(data = []) {
             if (err) {
               console.error(`Error en la fila ${index}:`, err);
               errorFlag = true;
-            }
-            else {
+            } else {
               // result contiene el valor devuelto por RETURNING
-              if (result ) {
-                insertedIds[index] = result.cedula; 
+              if (result) {
+                insertedIds[index] = result.cedula;
               }
             }
-
 
             pendingQueries--;
 
@@ -178,30 +177,29 @@ async function insertarDigitacionBeneficiario(data = []) {
   });
 }
 
-
 const ExisteDigitacion = async (id = 0) => {
   return new Promise((resolve, reject) => {
     pool.get((err, db) => {
       if (err) return reject(err);
-      let sql = "select  d.iddigitacion, d.codigoafiliacion from TBLTDIGITACIONUNO d where d.iddigitacion = ?";
+      let sql =
+        "select  d.iddigitacion, d.codigoafiliacion from TBLTDIGITACIONUNO d where d.iddigitacion = ?";
       db.query(sql, [id], (err, result) => {
         db.detach();
         if (err) return reject(err);
-         resolve (result)
-        
+        resolve(result);
       });
     });
   });
-
-}
+};
 
 //eliminar Beneficiario
 async function EliminarBeneficiario(Datos) {
   return new Promise((resolve, reject) => {
     pool.get((err, db) => {
       if (err) return reject(err);
-      let sql = "DELETE FROM TBLBDIGITACIONUNO WHERE IDDIGITACION= ? AND CEDULA=?";
-      db.query(sql,Datos, (err, result) => {
+      let sql =
+        "DELETE FROM TBLBDIGITACIONUNO WHERE IDDIGITACION= ? AND CEDULA=?";
+      db.query(sql, Datos, (err, result) => {
         db.detach();
         if (err) return reject(err);
         resolve(true);
@@ -210,18 +208,28 @@ async function EliminarBeneficiario(Datos) {
   });
 }
 
-
-//buscar  digitaciones 
+//buscar  digitaciones
 async function BuscarContratos(Datos) {
-   
+  //mejora Reutilzar Los Pool Para No Hacerlo Siempre Da Pereza Luego Se Remplza para los demas
+  const sql = "SELECT * FROM PRC_BUSQUEDA_DIGITACION(?, ?, ?, ?, ?,?)";
+  const respuesta = await ejecutarConsulta(sql, Datos);
 
-  console.log('Datos :>> ', Datos);
-  const params = ['2025-05-01', '2025-05-31'];
-  //mejora Reutilzar Los Pool Para No Hacerlo Siempre Da Pereza Luego Se Remplza para los demas 
-  const sql = "SELECT * FROM PRC_BUSQUEDA_DIGITACION(?, ?, ?, ?, ?)"
-  const respuesta  = await ejecutarConsulta(sql , Datos)
-
-  return respuesta
+  return respuesta;
 }
 
-module.exports = { insertarDigitacion, insertarDigitacionBeneficiario , ExisteDigitacion,EliminarBeneficiario, BuscarContratos };
+async function BuscarBenefeciarios(iddigitacion) {
+  //mejora Reutilzar Los Pool Para No Hacerlo Siempre Da Pereza Luego Se Remplza para los demas
+  const sql = "SELECT * FROM P_AW_GETBENEFICIARIO(?)";
+  const respuesta = await ejecutarConsulta(sql, [iddigitacion]);
+  const converted = respuesta.map(row => convertKeysToCamelCaseIfHasUnderscore(row));
+  return converted;
+}
+
+module.exports = {
+  insertarDigitacion,
+  insertarDigitacionBeneficiario,
+  ExisteDigitacion,
+  EliminarBeneficiario,
+  BuscarContratos,
+  BuscarBenefeciarios,
+};

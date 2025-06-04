@@ -2,8 +2,10 @@
 const {
   convertKeysToCamelCaseIfHasUnderscore,
 } = require("../../helpers/ComelCase");
-const Municipio = require("../../model/Ciudad");
-const Departamento = require("../../model/Departamento");
+const { Municipio } = require("../../model/Ciudad");
+
+const { Departamento } = require("../../model/Departamento");
+
 const pool = require("../config");
 
 //carga TodolosAsesores
@@ -35,7 +37,7 @@ const loadCiudadesDepartamento = async (codigo) => {
           convertKeysToCamelCaseIfHasUnderscore(row)
         );
         const municipiosTransformados = converted.map((m) => {
-          const depto = new Departamento(
+          const depto = new   Departamento(
             m.codDepartamento,
             m.departamento,
             m.codRespuesta,

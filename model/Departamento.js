@@ -14,4 +14,4 @@ class Departamento {
   }
 }
 
-module.exports = Departamento;
+module.exports ={ Departamento};

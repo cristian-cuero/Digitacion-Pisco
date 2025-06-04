@@ -1,25 +1,32 @@
+const { Barrio } = require("./Barrio");
+const { Municipio } = require("./Ciudad");
+const { Departamento } = require("./Departamento");
+
 class Titular {
     constructor(data = {}) {
+
       this.id = data.id || null;
-      this.identificacion = data.identificacion || '';
-      this.nombre1 = data.nombre1 || '';
+      this.identificacion = data.cedula || '';
+      this.nombre1 = data.nombres || '';
       this.nombre2 = data.nombre2 || '';
-      this.apellido1 = data.apellido1 || '';
+      this.apellido1 = data.apellidos || '';
       this.apellido2 = data.apellido2 || '';
-      this.departamento = new Departamento(data.departamento);
-      this.municipio = new Municipio(data.municipio);
+      this.departamento = new Departamento (data.coddane ,data.departamento);
+      this.municipio = new  Municipio (data.idmunicipio, data.municipio);
       this.direccion = data.direccion || '';
-      this.barrio = new Barrio(data.barrio);
+      this.barrio = new Barrio(data);
       this.telefono = data.telefono || '';
-      this.celular1 = data.celular1 || '';
+      this.celular1 = data.celular || '';
       this.celular2 = data.celular2 || '';
       this.email = data.email || '';
-      this.fechaNacimiento = data.fechaNacimiento || null;
-      this.edadAfiliacion = data.edadAfiliacion || null;
-      this.edadaActual = data.edadaActual || null;
+      this.fechaNacimiento = data.fechanacimiento || null;
+      this.edadAfiliacion = data.edad || null;
+      this.edadActual = data.edad2 || null;
       this.genero = data.genero || '';
-      this.fechaCobertura = data.fechaCobertura || null;
-      this.fechaAfiliacion = data.fechaAfiliacion || null;
+      this.fechaCobertura = data.fechacobertura || null;
+      this.fechaAfiliacion = data.fechaafiliacion || null;
+      this.codigocuenta =  data.codigooafiliacion;
+      this.estadocivil = data.estadocivil
     }
   
     getNombreCompleto() {

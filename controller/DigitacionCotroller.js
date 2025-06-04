@@ -5,7 +5,9 @@ const {
   ExisteDigitacion,
   EliminarBeneficiario,
   BuscarContratos,
+  BuscarBenefeciarios,
 } = require("../database/queries/Digitacion");
+const { Contrato } = require("../model/Contrato");
 const ordenColumnas = [
   "NOMBRES",
   "APELLIDOS",
@@ -126,7 +128,7 @@ const eliminarBenefi = async (req = request, res = response) => {
 
 //buscarBeneficiario
 
-const searchBenefi = async (req = request, res = response) => {
+const searchBenefi = async (req = request, res = response) => { 
   try {
     const {
       desde  ,
@@ -134,12 +136,13 @@ const searchBenefi = async (req = request, res = response) => {
       cedula ,
       contrato, 
       empresa,
+      iddigitacion
     } = req.query;
 
-    const contratos = await BuscarContratos([desde,hasta,cedula,contrato, empresa])
-
+    const contratos = await BuscarContratos([desde,hasta,cedula,contrato,empresa,iddigitacion])
+    const respuesta = contratos.map(obj => new Contrato(obj))
     return res.status(200).json(
-      contratos
+      respuesta
     )
   } catch (error) {
     return (
@@ -151,9 +154,33 @@ const searchBenefi = async (req = request, res = response) => {
     );
   }
 };
+
+//Beneficiarios
+const searchBenefiB = async (req = request, res = response) => { 
+  try {
+    const {
+      iddigitacion 
+    } = req.query;
+
+    const beneficiarios = await BuscarBenefeciarios(iddigitacion)
+
+    return res.status(200).json(
+      beneficiarios
+    )
+  } catch (error) {
+    return (
+      res.status(500).
+      json({
+        msg: "Se Presento Un rro Buscando Los Beneficiarios",
+        msg2: error.message,
+      })
+    );
+  }
+};
 module.exports = {
   crearDigitacion,
   crearDigitacionBenefi,
   eliminarBenefi,
   searchBenefi,
+  searchBenefiB
 };
