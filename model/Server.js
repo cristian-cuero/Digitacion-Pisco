@@ -22,7 +22,8 @@ class Server {
       departamentos: "/api/department",
       empresas: "/api/empresas",
       planes: "/api/plan",
-      roles: "/api/role"
+      roles: "/api/role",
+      digitacionImagenes: "/api/digitacionImagenes"
     };
 
     this.middleware();
@@ -69,6 +70,7 @@ class Server {
     this.app.use(this.paths.empresas, require("../routes/Empresas"));
     this.app.use(this.paths.planes, require("../routes/Planes"));
     this.app.use(this.paths.roles, require("../routes/Roles"));
+    this.app.use(this.paths.digitacionImagenes , require("../routes/digitacionImagenes"))
   }
 }
 //exportar

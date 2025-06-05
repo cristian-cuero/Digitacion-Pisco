@@ -1,5 +1,7 @@
 const Firebird = require("node-firebird");
-const { convertKeysToCamelCaseIfHasUnderscore } = require("../../helpers/ComelCase");
+const {
+  convertKeysToCamelCaseIfHasUnderscore,
+} = require("../../helpers/ComelCase");
 const pool = require("../config");
 const { finalizarTransaccion } = require("../db");
 const { ejecutarConsulta } = require("../ObtenerPool");
@@ -101,7 +103,7 @@ async function insertarDigitacion(data) {
         data.VALORCTOPOST,
         data.REACTIVACION,
         data.USUARIOREGISTRO,
-        1,
+        0,
       ];
 
       db.query(sql, values, (err, result) => {
@@ -122,6 +124,69 @@ async function insertarDigitacion(data) {
   });
 }
 
+//editarDigitacion
+
+async function editarDigitacionQuery(data = []) {
+
+  const sql = ` UPDATE TBLTDIGITACIONUNO SET
+  FECHAAFILIACION = ?,
+  CODIGOAFILIACION = ?,
+  APELLIDOS = ?,
+  NOMBRES = ?,
+  CEDULA = ?,
+  ESTADOCIVIL = ?,
+  IDGRADO = ?,
+  IDFUERZA = ?,
+  TELEFONO = ?,
+  DEPARTAMENTO = ?,
+  CIUDAD = ?,
+  CODIGOMIN = ?,
+  UNIDAD = ?,
+  BATALLON = ?,
+  IDPLAN = ?,
+  IDASESOR = ?,
+  FECHAIDESCUENTO = ?,
+  USUARIO = ?,
+  NITEMPRESA = ?,
+  DESCRIPCIONFUERZA = ?,
+  FECHATERCONTRATO = ?,
+  VALORPLAN = ?,
+  NROADICIONALES = ?,
+  VALORADICIONAL = ?,
+  VTAFILIACION = ?,
+  DIRECCION = ?,
+  TIPOVIVIENDA = ?,
+  CELULAR = ?,
+  FECHANACIMIENTO = ?,
+  EDAD = ?,
+  OBSERVACIONES = ?,
+  DIRECCIONANT = ?,
+  BARRIO = ?,
+  MAIL = ?,
+  TIENEIMAGEN = ?,
+  MESESGRATIS = ?,
+  FUNANTERIOR = ?,
+  IDDIRECTOR = ?,
+  CEDULACONTACTO = ?,
+  NOMBRECONTACTO = ?,
+  TELEFONOCONTACTO = ?,
+  DIRECCIONCONTACTO = ?,
+  CIUDADCONTACTO = ?,
+  FNACIMIENTOCONTACTO = ?,
+  EDADCONTACTO = ?,
+  TIPOVIVIENDACONTACTO = ?,
+  NOMBREREFERIDO = ?,
+  TELEFONOREFERIDO = ?,
+  NOMBREREFERIDOONE = ?,
+  TELEFONOREFERIDOONE = ?,
+  CUOTAS = ?,
+  VALORCTOPOST = ?,
+  REACTIVACION = ?,
+  USUARIOREGISTRO = ?
+WHERE IDDIGITACION = ? `;
+
+  await ejecutarConsulta(sql, data[0] );
+}
 //insertar digitacion beneficiario
 
 async function insertarDigitacionBeneficiario(data = []) {
@@ -182,7 +247,7 @@ const ExisteDigitacion = async (id = 0) => {
     pool.get((err, db) => {
       if (err) return reject(err);
       let sql =
-        "select  d.iddigitacion, d.codigoafiliacion from TBLTDIGITACIONUNO d where d.iddigitacion = ?";
+        "select  d.iddigitacion, d.codigoafiliacion, NITEMPRESA from TBLTDIGITACIONUNO d where d.iddigitacion = ?";
       db.query(sql, [id], (err, result) => {
         db.detach();
         if (err) return reject(err);
@@ -221,7 +286,9 @@ async function BuscarBenefeciarios(iddigitacion) {
   //mejora Reutilzar Los Pool Para No Hacerlo Siempre Da Pereza Luego Se Remplza para los demas
   const sql = "SELECT * FROM P_AW_GETBENEFICIARIO(?)";
   const respuesta = await ejecutarConsulta(sql, [iddigitacion]);
-  const converted = respuesta.map(row => convertKeysToCamelCaseIfHasUnderscore(row));
+  const converted = respuesta.map((row) =>
+    convertKeysToCamelCaseIfHasUnderscore(row)
+  );
   return converted;
 }
 
@@ -232,4 +299,5 @@ module.exports = {
   EliminarBeneficiario,
   BuscarContratos,
   BuscarBenefeciarios,
+  editarDigitacionQuery
 };
