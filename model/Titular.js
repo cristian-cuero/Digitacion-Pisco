@@ -27,6 +27,20 @@ class Titular {
       this.fechaAfiliacion = data.fechaafiliacion || null;
       this.codigocuenta =  data.codigooafiliacion;
       this.estadocivil = data.estadocivil
+      this.cedulaContacto = data.cedulacontacto
+      this.nombreContacto = data.nombrecontacto
+      this.fechaNacimientoContacto = data.fechanacimientocontacto
+      this.edadActualContacto = data.edadactualcontacto
+      this.direccionContacto = data.direccioncontacto
+      this.ciudadContacto = data.ciudadcontacto
+      this.telefonoContacto = data.telefonocontacto
+      this.nombre1Referidos = data.nombrereferido
+      this.telefono1Referidos = data.telefonoreferido
+      this.nombre2Referidos = data.nombrereferidoone
+      this.telefono2Referidos = data.telefonoreferidoone
+      this.tipoviviendacontacto = data.tipoviviendacontacto
+      this.fnacimientocontacto = data.fnacimientocontacto
+
     }
   
     getNombreCompleto() {
