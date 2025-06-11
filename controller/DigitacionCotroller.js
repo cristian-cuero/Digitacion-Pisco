@@ -8,6 +8,7 @@ const {
   BuscarBenefeciarios,
   editarDigitacionQuery,
 } = require("../database/queries/Digitacion");
+const { consultarPrivilegio } = require("../database/queries/privilegios");
 const { Contrato } = require("../model/Contrato");
 const ordenColumnas = [
   "NOMBRES",
@@ -120,26 +121,24 @@ const crearDigitacion = async (req = request, res = response) => {
 const editarDigitacion = async (req = request, res = response) => {
   const { ...digitacion } = req.body;
   const { iddigitacion } = req.query;
-  const Adigitacion = [digitacion]
+  const Adigitacion = [digitacion];
   try {
     const respuesta = await ExisteDigitacion(iddigitacion);
     if (respuesta.length === 0)
       return res.status(500).json({ msg: "No Existe La Digitacion" });
-     const arrayDeArrays = Adigitacion.map((obj) => [
+    const arrayDeArrays = Adigitacion.map((obj) => [
       ...ordenColumnasDigitacion.map((col) => obj[col]),
       iddigitacion,
     ]);
-    await editarDigitacionQuery(arrayDeArrays)
+    await editarDigitacionQuery(arrayDeArrays);
 
     return res.status(200).json({
-      msg: "Contrato Editado Con Exito"
-    })
+      msg: "Contrato Editado Con Exito",
+    });
   } catch (error) {
- 
     res.status(500).json({
       msg: "Se Presento Un Error Al Editar El Contrato",
       msg2: error,
-      
     });
   }
 };
@@ -216,7 +215,24 @@ const eliminarBenefi = async (req = request, res = response) => {
 
 const searchBenefi = async (req = request, res = response) => {
   try {
-    const { desde, hasta, cedula, contrato, empresa, iddigitacion } = req.query;
+    const {
+      desde,
+      hasta,
+      cedula,
+      contrato,
+      empresa,
+      iddigitacion,
+      idasesor,
+      usuario,
+    } = req.query;
+    // si puede hacer el proceso
+    if (!idasesor) {
+      const r = await consultarPrivilegio(usuario, "Busqueda Sin Asesor", "AW");
+      if (!r && (!idasesor && !iddigitacion)   )
+        return res.status(400).json({
+          msg: "Sin Privilegio Para Buscar Sin Asesor",
+        });
+    }
 
     const contratos = await BuscarContratos([
       desde,
@@ -225,6 +241,7 @@ const searchBenefi = async (req = request, res = response) => {
       contrato,
       empresa,
       iddigitacion,
+      idasesor,
     ]);
     const respuesta = contratos.map((obj) => new Contrato(obj));
     return res.status(200).json(respuesta);

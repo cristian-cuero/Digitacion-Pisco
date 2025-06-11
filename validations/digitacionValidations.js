@@ -79,12 +79,21 @@ const validarAfiliacionBenefi = [
 
 const validarBusqueda = [
   // Middleware personalizado: asegura que al menos uno esté presente
+
   (req, res, next) => {
-    const { hasta, desde, cedula, contrato, empresa, iddigitacion } = req.query;
+  
+    const { hasta, desde, cedula, contrato, empresa, iddigitacion , usuario} = req.query;
 
     if (!desde && !cedula && !contrato & !hasta & !empresa & !iddigitacion) {
       return res.status(400).json({
         msg: "Debe proporcionar al menos uno de los siguientes parámetros: fecha, cedula o contrato o Empresa o iddigitacion",
+      });
+    }
+    
+    if(!usuario && !iddigitacion) {
+
+      return res.status(400).json({
+        msg: 'Debe proporcionar el usuario',
       });
     }
 
@@ -131,7 +140,7 @@ const validarBusqueda = [
     .optional()
     .isString()
     .withMessage("El contrato debe ser una cadena"),
-    query("iddigitacion")
+  query("iddigitacion")
     .optional()
     .isString()
     .withMessage("El contrato debe ser una cadena"),

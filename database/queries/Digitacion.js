@@ -276,7 +276,7 @@ async function EliminarBeneficiario(Datos) {
 //buscar  digitaciones
 async function BuscarContratos(Datos) {
   //mejora Reutilzar Los Pool Para No Hacerlo Siempre Da Pereza Luego Se Remplza para los demas
-  const sql = "SELECT * FROM PRC_BUSQUEDA_DIGITACION(?, ?, ?, ?, ?,?)";
+  const sql = "SELECT * FROM PRC_BUSQUEDA_DIGITACION(?, ?, ?, ?, ?,?, ?)";
   const respuesta = await ejecutarConsulta(sql, Datos);
 
   return respuesta;
