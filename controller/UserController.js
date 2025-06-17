@@ -44,7 +44,8 @@ const auth = async (req = request, res = response) => {
 
 const allUsuarios = async (req = request, res = response) => {
   try {
-    const users = await allUser();
+    const {user} = req.query
+    const users = await allUser(user);
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({
@@ -67,7 +68,6 @@ const updateUser = async (req = request, res = response) => {
       campos.map(col => getValueByInsensitiveKey(obj, col))
     );
     const username = await updateUserQuery(arrayDeArrays)
-    console.log('username :>> ', username);
     if (username ){
       return res.status(200).json({
         msg: "Usuario Actualizado",

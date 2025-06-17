@@ -25,7 +25,7 @@ class Titular {
       this.genero = data.genero || '';
       this.fechaCobertura = data.fechacobertura || null;
       this.fechaAfiliacion = data.fechaafiliacion || null;
-      this.codigocuenta =  data.codigooafiliacion;
+      this.codigocuenta =  data.codigocuenta;
       this.estadocivil = data.estadocivil
       this.cedulaContacto = data.cedulacontacto
       this.nombreContacto = data.nombrecontacto
@@ -40,7 +40,7 @@ class Titular {
       this.telefono2Referidos = data.telefonoreferidoone
       this.tipoviviendacontacto = data.tipoviviendacontacto
       this.fnacimientocontacto = data.fnacimientocontacto
-
+      this.afiliacion = data.codigooafiliacion
     }
   
     getNombreCompleto() {

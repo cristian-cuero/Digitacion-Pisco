@@ -75,17 +75,13 @@ const getUsername = (username) => {
   });
 };
 
-const allUser = () => {
+const allUser = (user = '') => {
   return new Promise((resolve, reject) => {
     pool.get((err, db) => {
       if (err) return reject(err);
 
-      let sql =
-        "SELECT u.username, '' password, u.idpersona id_persona, U.nombres nombre, u.APELLIDOS APELLIDO, 0 renovarPass , U.ESTADO, '' cargo , u.usuariomodif usuario_Modif, 200 cod_Respuesta, ";
-      sql =
-        sql +
-        "'' msj_Respuesta, u.idvendedor , null fechacreacion, U.pwdrol rol, null IDCAJA,  null CAJA, 0 cantidad_Licencias, null fechaactulizacion, null uuid, null subdominio FROM tblusuarios u where u.estado = 1";
-      db.query(sql, [], async (err, result) => {
+      let sql = 'SELECT * FROM P_AW_LISTUSUARIOS(?)'
+      db.query(sql, [user], async (err, result) => {
         if (err) {
           db.detach();
           return reject(err);
