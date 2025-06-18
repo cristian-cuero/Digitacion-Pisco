@@ -9,8 +9,8 @@ const loadParentescoPlanesq = async (id) => {
     pool.get((err, db) => {
       if (err) return reject(err);
       const sql =
-        `SELECT a.idparentesco, A.parentesco  FROM TBLPARENTESCO A  INNER JOIN tblplanparentesco B ON A.idparentesco =B.idparentesco Where b.IDPLAN = ? order by a.parentesco`;
-      db.query(sql, [id], (err, result) => {
+        `SELECT a.idparentesco, A.parentesco  FROM TBLPARENTESCO A order by a.parentesco`;
+      db.query(sql, [], (err, result) => {
         db.detach();
         if (err) return reject(err);
         resolve(result);
