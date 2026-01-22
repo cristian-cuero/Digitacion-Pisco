@@ -4,9 +4,9 @@ const jwt  =  require('jsonwebtoken')
 const { getUsername } = require('../database/queries/User')
 
 
-const generarJWT = (username = '') => {
+const generarJWT = (username = '', bd = '') => {
 
-    const payload = {username}
+    const payload = {username, bd}
     return new Promise((resolve, reject) => {
         jwt.sign(payload , process.env.SECRETORPRIVATEKEY , {
             expiresIn: '5h'
@@ -30,6 +30,7 @@ const comprobarJWT = async( token = '') => {
             return null;
         }
 
+       
         const { username } = jwt.verify( token, process.env.SECRETORPRIVATEKEY );
         const usuario = await getUsername(username)
 

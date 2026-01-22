@@ -12,4 +12,8 @@ router.get("/list",  [
       validarCampos
   ], [validarJWT], loadASesores );
 
+
+
+
+
 module.exports = router;

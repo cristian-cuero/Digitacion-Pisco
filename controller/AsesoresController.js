@@ -6,7 +6,8 @@ const { loadAsesores } = require("../database/queries/asesores");
 const loadASesores = async (req = request  , res =response )=> {
 
     try {
-        const asesores =  await loadAsesores(req.query.tipoEmpleado )
+        const dbKey = req.dbKey; // extraigo solo lo necesario
+        const asesores =  await loadAsesores(req.query, dbKey  )
         return res.status(200).json(
             asesores
         )

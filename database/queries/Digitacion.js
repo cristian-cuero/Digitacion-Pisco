@@ -4,34 +4,31 @@ const {
 } = require("../../helpers/ComelCase");
 const pool = require("../config");
 const { finalizarTransaccion } = require("../db");
+const { getPool } = require("../FirebirdPoolFactory");
 const { ejecutarConsulta } = require("../ObtenerPool");
 
 // Obtener nuevo ID desde el procedimiento almacenado
-async function obtenerNuevoId(titular = true) {
-  return new Promise((resolve, reject) => {
-    pool.get((err, db) => {
-      if (err) return reject(err);
+async function obtenerNuevoId( dbKey , titular = true) {
+
       let sql = "";
       if (titular) {
         sql = "select id from SP_GEN_TBLTDIGITACIONUNO_ID";
       } else {
         sql = "SELECT id FROM P_GEN_IDBENEFICIARIO";
       }
-      db.query(sql, [], (err, result) => {
-        db.detach();
-        if (err) return reject(err);
-        resolve(result[0].ID);
-      });
-    });
-  });
+       const respuesta = await ejecutarConsulta(dbKey,sql);
+
+       return respuesta;
 }
 
 // Insertar digitacion titular
-async function insertarDigitacion(data) {
-  return new Promise(async (resolve, reject) => {
-    const IDDIGITACIONPRO = await obtenerNuevoId();
-    pool.get((err, db) => {
-      if (err) return reject(err);
+async function insertarDigitacion( dbKey ,data) {
+ 
+
+    const IDDIGITACIONPRO = await obtenerNuevoId(dbKey)
+
+    console.log('IDDIGITACIONPRO :>> ', IDDIGITACIONPRO);
+    
 
       const sql = `
             INSERT INTO TBLTDIGITACIONUNO 
@@ -48,7 +45,7 @@ async function insertarDigitacion(data) {
           `;
 
       const values = [
-        IDDIGITACIONPRO,
+        IDDIGITACIONPRO[0].ID,
         data.FECHAAFILIACION,
         data.CODIGOAFILIACION,
         data.APELLIDOS,
@@ -106,27 +103,32 @@ async function insertarDigitacion(data) {
         0,
       ];
 
-      db.query(sql, values, (err, result) => {
-        db.detach();
-        if (err) {
-          if (err.gdscode === 335544665) {
-            return reject({
-              msg: "Ya se Encuentra registrado Este Cliente",
-              iddigitacion: 0,
-              codigoafiliacion: "0",
-            });
-          }
-          return reject(err);
+      try {
+        const result = await ejecutarConsulta(dbKey, sql, values);
+        return  result ;
+      } catch (err) {
+        if (err.msg === "Ya se Encuentra El registro") {
+          throw {
+            msg: "Ya se Encuentra registrado Este Cliente",
+            iddigitacion: 0,
+            codigoafiliacion: "0",
+          };
+        } else {
+          throw {
+            msg: err,
+            iddigitacion: 0,
+            codigoafiliacion: "0",
+          };
         }
-        resolve(result);
-      });
-    });
-  });
+      }
+      
+      
+
 }
 
 //editarDigitacion
 
-async function editarDigitacionQuery(data = []) {
+async function editarDigitacionQuery(dbKey,data = []) {
 
   const sql = ` UPDATE TBLTDIGITACIONUNO SET
   FECHAAFILIACION = ?,
@@ -185,107 +187,67 @@ async function editarDigitacionQuery(data = []) {
   USUARIOREGISTRO = ?
 WHERE IDDIGITACION = ? `;
 
-  await ejecutarConsulta(sql, data[0] );
+  await ejecutarConsulta(dbKey,sql, data[0] );
 }
 //insertar digitacion beneficiario
 
-async function insertarDigitacionBeneficiario(data = []) {
-  return new Promise((resolve, reject) => {
-    pool.get((err, db) => {
-      if (err) return reject(err);
-
-      db.transaction(Firebird.ISOLATION_READ_COMMITTED, (err, transaction) => {
-        if (err) {
-          db.detach();
-          return reject(err);
-        }
+async function insertarDigitacionBeneficiario( dbKey,data = []) {
+ 
 
         const sql = `INSERT INTO TBLBDIGITACIONUNO 
           (NOMBRES, APELLIDOS, IDPARENTESCO, EDAD, USUARIO, PROCESADO, 
           NITEMPRESA, ADICIONAL, VALORADICIONAL, IDDIGITACION, CODIGOAFILIACION) 
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)  RETURNING CEDULA `;
-
-        let errorFlag = false;
-        let pendingQueries = data.length;
-        let insertedIds = [];
-
-        data.forEach((dato, index) => {
-          transaction.query(sql, dato, (err, result) => {
-            if (err) {
-              console.error(`Error en la fila ${index}:`, err);
-              errorFlag = true;
-            } else {
-              // result contiene el valor devuelto por RETURNING
-              if (result) {
-                insertedIds[index] = result.cedula;
-              }
-            }
-
-            pendingQueries--;
-
-            // Solo finaliza la transacción cuando todas las consultas han terminado
-            if (pendingQueries === 0) {
-              const data = finalizarTransaccion(
-                transaction,
-                db,
-                errorFlag,
-                resolve,
-                reject,
-                insertedIds
-              );
-              console.log("data :>> ", data);
-            }
-          });
-        });
-      });
-    });
-  });
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING CEDULA`;
+          console.log(data[0])
+         const result = await ejecutarConsulta(dbKey, sql, data[0]);
+         
+         if(result){
+          return true
+         }else{
+          return false
+         }
+        
 }
 
-const ExisteDigitacion = async (id = 0) => {
-  return new Promise((resolve, reject) => {
-    pool.get((err, db) => {
-      if (err) return reject(err);
+const ExisteDigitacion = async ( dbKey, id = 0) => {
+
       let sql =
         "select  d.iddigitacion, d.codigoafiliacion, NITEMPRESA from TBLTDIGITACIONUNO d where d.iddigitacion = ?";
-      db.query(sql, [id], (err, result) => {
-        db.detach();
-        if (err) return reject(err);
-        resolve(result);
-      });
-    });
-  });
+      const respuesta = await ejecutarConsulta(dbKey , sql , id)
+      return respuesta;
 };
 
 //eliminar Beneficiario
-async function EliminarBeneficiario(Datos) {
-  return new Promise((resolve, reject) => {
-    pool.get((err, db) => {
-      if (err) return reject(err);
-      let sql =
+async function EliminarBeneficiario(dbKey,Datos) {
+  // return new Promise((resolve, reject) => {
+  //   pool.get((err, db) => {
+  //     if (err) return reject(err);
+       let sql =
         "DELETE FROM TBLBDIGITACIONUNO WHERE IDDIGITACION= ? AND CEDULA=?";
-      db.query(sql, Datos, (err, result) => {
-        db.detach();
-        if (err) return reject(err);
-        resolve(true);
-      });
-    });
-  });
+        await ejecutarConsulta(dbKey, sql , Datos)
+        return true;
+    //   db.query(sql, Datos, (err, result) => {
+    //     db.detach();
+    //     if (err) return reject(err);
+    //     resolve(true);
+    //   });
+    // });
+  // });
 }
 
 //buscar  digitaciones
-async function BuscarContratos(Datos) {
+async function BuscarContratos(dbKey,Datos) {
   //mejora Reutilzar Los Pool Para No Hacerlo Siempre Da Pereza Luego Se Remplza para los demas
   const sql = "SELECT * FROM PRC_BUSQUEDA_DIGITACION(?, ?, ?, ?, ?,?, ?)";
-  const respuesta = await ejecutarConsulta(sql, Datos);
+  const respuesta = await ejecutarConsulta(dbKey,sql, Datos);
 
   return respuesta;
 }
 
-async function BuscarBenefeciarios(iddigitacion) {
+async function BuscarBenefeciarios( dbKey,iddigitacion) {
   //mejora Reutilzar Los Pool Para No Hacerlo Siempre Da Pereza Luego Se Remplza para los demas
   const sql = "SELECT * FROM P_AW_GETBENEFICIARIO(?)";
-  const respuesta = await ejecutarConsulta(sql, [iddigitacion]);
+  const respuesta = await ejecutarConsulta(dbKey,sql, [iddigitacion]);
   const converted = respuesta.map((row) =>
     convertKeysToCamelCaseIfHasUnderscore(row)
   );

@@ -12,7 +12,7 @@ const getUsersLogin = (username, password) => {
       sql =
         sql +
         " '' msjRespuesta, u.IDVENDEDOR IDVENDEDOR, null fechacreacion, U.pwdrol rol, null IDCAJA,  null CAJA, 30 cantidadLicencias, null fechaactualizacion, null uuid,  ";
-      sql = sql + " null subdominio FROM tblusuarios u  WHERE username = ?";
+      sql = sql + " null subdominio, BD FROM tblusuarios u  WHERE username = ?";
       db.query(sql, [username], async (err, result) => {
         if (err) {
           db.detach();

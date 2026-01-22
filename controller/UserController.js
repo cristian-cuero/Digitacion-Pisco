@@ -1,5 +1,6 @@
 const { response, request, json } = require("express");
 const { jsbn } = require("node-forge");
+const { buscarBD } = require("../database/queries/BdAfiliaciones");
 const {
   getUsersLogin,
   allUser,
@@ -28,7 +29,20 @@ const auth = async (req = request, res = response) => {
         msg: "Usuario o contraseña inválidos",
       });
     }
-    const token = await generarJWT(user.username);
+    console.log('user :>> ', user.bd);
+    //BD DEL SISTEMA
+    const Bd  =   user.bd ? user.bd.split(",").map(v => v.trim())
+    : [];
+    // si tiene ms de dos elegimos cual quiere usar
+    if(Bd.length > 1 ){
+       const bases = await buscarBD(Bd)
+       const arrayBases = Object.keys(bases).map(key => bases[key])
+       return res.status(202).json (
+        arrayBases
+       )
+    } 
+    const token = await generarJWT(user.username , Bd );
+    user.bd = Bd;
     user.TOKEN = token;
     return res.status(200).json({
       ...user,
@@ -54,6 +68,41 @@ const allUsuarios = async (req = request, res = response) => {
     });
   }
 };
+
+const selectDb = async (req, res) => {
+  const { username, db } = req.body;
+
+  try {
+    // 1. Revalidar usuario
+    const user = await getUsername(username);
+
+    if (!user) {
+      return res.status(401).json({ msg: "Usuario inválido" });
+    }
+
+    const allowedDbs = user.bd
+      ? user.bd.split(",").map(v => v.trim())
+      : [];
+
+    if (!allowedDbs.includes(db)) {
+      return res.status(403).json({ msg: "BD no autorizada" });
+    }
+
+    // 2. Generar token con BD
+    const token = await generarJWT({
+      username,
+      db
+    });
+    user.TOKEN = token;
+    return res.status(200).json(user );
+
+  } catch (error) {
+    return res.status(500).json({
+      msg: error.message,
+    });
+  }
+};
+
 
 const updateUser = async (req = request, res = response) => {
   try {
@@ -86,4 +135,4 @@ const updateUser = async (req = request, res = response) => {
   }
 };
 
-module.exports = { auth, allUsuarios, updateUser };
+module.exports = { auth, allUsuarios, updateUser,  selectDb };

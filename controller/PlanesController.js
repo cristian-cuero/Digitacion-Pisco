@@ -7,7 +7,8 @@ const { loadParentescoPlanesq } = require("../database/queries/Planes");
 const loadParentescoPlan = async (req = request  , res =response )=> {
 
     try {
-        const convenios =  await loadParentescoPlanesq(req.params.idplan)
+        const dbKey = req.dbKey;
+        const convenios =  await loadParentescoPlanesq(dbKey, req.params.idplan)
         return res.status(200).json(
             Object.values(convenios)
         )

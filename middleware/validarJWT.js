@@ -1,5 +1,6 @@
 const { response, request } = require('express');
 const jwt = require('jsonwebtoken');
+const { getPool } = require('../database/FirebirdPoolFactory');
 const { getUsername } = require('../database/queries/User');
 
 
@@ -18,9 +19,15 @@ const validarJWT = async( req = request, res = response, next ) => {
     try {
         
         //console.log(token)
+       
         const { username } =  jwt.verify( token, process.env.SECRETORPRIVATEKEY );
-        //console.log(username)
-        const usuario = await getUsername(username)
+        console.log(username)
+
+        if (!username.db) {
+            return res.status(400).json({ msg: "Token sin BD asociada" });
+          }
+          
+        const usuario = await getUsername(username.username)
 
         if( !usuario ) {
             return res.status(401).json({
@@ -34,8 +41,10 @@ const validarJWT = async( req = request, res = response, next ) => {
                 msg: 'Token no válido - usuario con estado: false'
             })
         }
-        
-        
+         
+           // 🔥 Pool dinámico según la BD del token
+        getPool(username.db);
+         req.dbKey =  username.db
          req.usuario = usuario;
          next();
 

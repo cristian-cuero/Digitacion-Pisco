@@ -6,8 +6,8 @@ const { allRolesQuery } = require("../database/queries/Roles");
 const allRoles = async (req = request, res = response) => {
  
     try {
-
-        const roles = await allRolesQuery()
+        const dbKey = req.dbKey;
+        const roles = await allRolesQuery(dbKey)
 
         return res.status(200).json(
             roles

@@ -5,8 +5,9 @@ const { loadDirectores } = require("../database/queries/Directores");
 //busca Los Asesores  Activos
 const loaddirector = async (req = request  , res =response )=> {
 
+    const dbKey = req.dbKey; // extraigo solo lo necesario
     try {
-        const asesores =  await loadDirectores()
+        const asesores =  await loadDirectores(dbKey)
         return res.status(200).json(
             asesores
         )

@@ -3,34 +3,27 @@
 //tabla asociada a tblaasesores
 const {  convertKeysToCamelCaseIfHasUnderscore } = require("../../helpers/ComelCase");
 const pool = require("../config");
+const { ejecutarConsulta } = require("../ObtenerPool");
 
 //carga Todas las empreas
-const loadAllEmpresasq = async () => {
-  return new Promise((resolve, reject) => {
-    pool.get((err, db) => {
-      if (err) return reject(err);
+const loadAllEmpresasq = async (dbkey) => {
+
       const sql =
-        ` select e.nitempresa id_Empresas , e.nit nit_Empresa , cast( e.empresa  AS VARCHAR(200) CHARACTER SET WIN1252) empresa, 
-        e.telefono telefono1, ''telefono2, cast( e.direccion AS VARCHAR(200) CHARACTER SET WIN1252), e.estadoemp estado , null usuario, 
+        ` select e.nitempresa id_Empresas , e.nit nit_Empresa , e.empresa   empresa, 
+        e.telefono telefono1, ''telefono2,  e.direccion  , e.estadoemp estado , null usuario, 
         null  usuariomodif  , 0 vtitular, 0 vadicional, 200 cod_Respuesta,  '' msj_Respuesta,  '' subdominio from tblempresas e where e.estadoemp <>  'RETIRADO' order by e.empresa`;
-      db.query(sql, [], (err, result) => {
-        db.detach();
-        const converted = result.map(row => convertKeysToCamelCaseIfHasUnderscore(row));
-        if (err) return reject(err);
-        resolve(converted);
-      });
-    });
-  });
+      const respuesta = await ejecutarConsulta(dbkey , sql)
+      return respuesta
 };
 
 
 //carga Todas los planes De la empresa
-const loadAllPlanesEmprea = async (nit, idplan) => {
-  return new Promise((resolve, reject) => {
-    let sql
-    let params = [nit];
-    pool.get((err, db) => {
-      if (err) return reject(err);
+const loadAllPlanesEmprea = async (dbKey,nit, idplan) => {
+  // return new Promise((resolve, reject) => {
+     let sql
+  let params = [nit];
+  //   pool.get((err, db) => {
+  //     if (err) return reject(err);
       if(!idplan) {
         sql =
         `SELECT  b.idplan id, b.idplan id_plan,  B.NOMBREPLAN NOMBRE_PLAN , 0 estado,  a.vtitular valor_Base ,a.vadicional valor_Adicional, 0 nropersonas , 0 nropersonasadicionales , 1 aceptaadicional ,
@@ -46,17 +39,18 @@ const loadAllPlanesEmprea = async (nit, idplan) => {
         WHERE A.NIT =  ? and a.idplan = ? `
         params.push(idplan)
       }
-
+       const respuesta = await ejecutarConsulta(dbKey, sql, params)
+       return respuesta;
      
-      db.query(sql, params, (err, result) => {
-        db.detach();
+  //     db.query(sql, params, (err, result) => {
+  //       db.detach();
       
-        const respuesta = result.map(row => convertKeysToCamelCaseIfHasUnderscore(row));
-        if (err) return reject(err);
-        resolve(respuesta);
-      });
-    });
-  });
+  //       const respuesta = result.map(row => convertKeysToCamelCaseIfHasUnderscore(row));
+  //       if (err) return reject(err);
+  //       resolve(respuesta);
+  //     });
+  //   });
+  // });
 };
 
 module.exports = { loadAllEmpresasq,loadAllPlanesEmprea };

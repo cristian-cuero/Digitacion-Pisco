@@ -84,7 +84,8 @@ const crearDigitacion = async (req = request, res = response) => {
   const data = req.body;
 
   try {
-    const respuesta = await insertarDigitacion(data);
+    const dbKey = req.dbKey; 
+    const respuesta = await insertarDigitacion( dbKey ,data);
     let arrayDeArrays;
     if (!respuesta.msg & data.benefeci) {
       if (data.benefeci.length > 0) {
@@ -123,14 +124,15 @@ const editarDigitacion = async (req = request, res = response) => {
   const { iddigitacion } = req.query;
   const Adigitacion = [digitacion];
   try {
-    const respuesta = await ExisteDigitacion(iddigitacion);
+    const dbKey = req.dbKey; 
+    const respuesta = await ExisteDigitacion(dbKey,iddigitacion);
     if (respuesta.length === 0)
       return res.status(500).json({ msg: "No Existe La Digitacion" });
     const arrayDeArrays = Adigitacion.map((obj) => [
       ...ordenColumnasDigitacion.map((col) => obj[col]),
       iddigitacion,
     ]);
-    await editarDigitacionQuery(arrayDeArrays);
+    await editarDigitacionQuery(dbKey,arrayDeArrays);
 
     return res.status(200).json({
       msg: "Contrato Editado Con Exito",
@@ -149,15 +151,16 @@ const crearDigitacionBenefi = async (req = request, res = response) => {
 
   const beneficiarios = [beneficiario];
   try {
-    const respuesta = await ExisteDigitacion(idDigitacion);
-
+    const dbKey = req.dbKey; 
+    const respuesta = await ExisteDigitacion( dbKey, idDigitacion);
+    
     if (respuesta.length > 0) {
       arrayDeArrays = beneficiarios.map((obj) => [
         ...ordenColumnas.map((col) => obj[col]),
         respuesta[0].iddigitacion,
         respuesta[0].codigoafiliacion,
       ]);
-      const idBenefi = await insertarDigitacionBeneficiario(arrayDeArrays);
+      const idBenefi = await insertarDigitacionBeneficiario(dbKey,arrayDeArrays);
       return res.status(200).json({
         msg: "Beneficiario Creados",
         cedulas: idBenefi,
@@ -167,6 +170,7 @@ const crearDigitacionBenefi = async (req = request, res = response) => {
       msg: "No Se Encuentra La Afiliacion " + idDigitacion,
     });
   } catch (error) {
+    
     res.status(500).json({
       msg: "Se Presento Un Error Al Crear EL Beneficiario",
       msg2: error,
@@ -178,8 +182,8 @@ const crearDigitacionBenefi = async (req = request, res = response) => {
 
 const eliminarBenefi = async (req = request, res = response) => {
   const { Codigoafiliacion, Cedula } = req.query;
-
-  const exit = await ExisteDigitacion(Codigoafiliacion);
+  const dbKey = req.dbKey; 
+  const exit = await ExisteDigitacion(dbKey,Codigoafiliacion);
 
   if (exit.length <= 0) {
     return res.status(400).json({
@@ -194,7 +198,7 @@ const eliminarBenefi = async (req = request, res = response) => {
   }
   const datos = [Codigoafiliacion, Cedula];
 
-  const respuesta = await EliminarBeneficiario(datos);
+  const respuesta = await EliminarBeneficiario(dbKey,datos);
 
   if (respuesta) {
     return res.status(200).json({
@@ -218,23 +222,24 @@ const searchBenefi = async (req = request, res = response) => {
     const {
       desde,
       hasta,
-      cedula,
-      contrato,
-      empresa,
-      iddigitacion,
-      idasesor,
-      usuario,
+      cedula = null,
+      contrato = null,
+      empresa = null,
+      iddigitacion = null,
+      idasesor = null,
+      usuario = null,
     } = req.query;
+    const dbKey = req.dbKey; 
     // si puede hacer el proceso
     if (!idasesor) {
-      const r = await consultarPrivilegio(usuario, "Busqueda Sin Asesor", "AW");
+      const r = await consultarPrivilegio(dbKey,usuario, "Busqueda Sin Asesor", "AW");
       if (!r && (!idasesor && !iddigitacion)   )
         return res.status(400).json({
           msg: "Sin Privilegio Para Buscar Sin Asesor",
         });
     }
 
-    const contratos = await BuscarContratos([
+    const contratos = await BuscarContratos(dbKey,[
       desde,
       hasta,
       cedula,
@@ -247,7 +252,7 @@ const searchBenefi = async (req = request, res = response) => {
     return res.status(200).json(respuesta);
   } catch (error) {
     return res.status(500).json({
-      msg: "Se Presento Un rro Buscando Las Afiliaciones",
+      msg: "Se Presento Un erro Buscando Las Afiliaciones",
       msg2: error.message,
     });
   }
@@ -257,8 +262,8 @@ const searchBenefi = async (req = request, res = response) => {
 const searchBenefiB = async (req = request, res = response) => {
   try {
     const { iddigitacion } = req.query;
-
-    const beneficiarios = await BuscarBenefeciarios(iddigitacion);
+    const dbKey = req.dbKey; 
+    const beneficiarios = await BuscarBenefeciarios( dbKey,iddigitacion);
 
     return res.status(200).json(beneficiarios);
   } catch (error) {

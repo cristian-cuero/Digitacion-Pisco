@@ -4,9 +4,10 @@ const { loadDepartamentosq, loadCiudadesDepartamento } = require("../database/qu
 
 //busca Los Asesores  Activos
 const loadDepartamentos = async (req = request  , res =response )=> {
-
     try {
-        const departamentos =  await loadDepartamentosq()
+        const dbKey = req.dbKey; // extraigo solo lo necesario
+       
+        const departamentos =  await loadDepartamentosq( dbKey)
         return res.status(200).json(
             departamentos
         )
@@ -23,11 +24,11 @@ const loadDepartamentos = async (req = request  , res =response )=> {
 }
 
 const loadCiudades = async (req = request  , res =response )=> {
-
+   // extraigo solo lo necesario
     try {
-
+        const dbKey = req.dbKey; 
         
-        const ciudades =  await loadCiudadesDepartamento(req.query.codDepartamento)
+        const ciudades =  await loadCiudadesDepartamento( dbKey,req.query.codDepartamento)
         return res.status(200).json(
             ciudades
         )

@@ -1,10 +1,23 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { auth, allUsuarios, updateUser } = require('../controller/UserController');
+const { auth, allUsuarios, updateUser, selectDb } = require('../controller/UserController');
 const { validarCampos } = require('../middleware/validarcampos');
 const { validarJWT } = require('../middleware/validarJWT');
 
 const router = new Router();
+
+router.post('/login' ,[
+    check('username').notEmpty().withMessage('El Nombre De usuario Es Obligatorio'),
+     check('password').notEmpty().withMessage('La Contraseña Es Obligatoria'),
+     validarCampos
+],auth
+)
+
+router.post('/login/bd' , [
+    check('username').notEmpty().withMessage('El Nombre De usuario Es Obligatorio'),
+    check('db').notEmpty().withMessage('La Base De Datos Es Obligatoria'),
+    validarCampos
+],selectDb)
 
 router.post('/login' ,[
     check('username').notEmpty().withMessage('El Nombre De usuario Es Obligatorio'),

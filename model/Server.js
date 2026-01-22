@@ -4,6 +4,7 @@ const express  = require("express");
 
 const cors = require("cors");
 const { dbConnections } = require("../database/db");
+const { loadDbCatalog } = require("../database/queries/BdAfiliaciones");
 
 
 class Server {
@@ -28,6 +29,8 @@ class Server {
 
     this.middleware();
     this.conectarDD();
+    
+    console.log("✅ Catálogo de BD cargado");
     //rutas de la aplicacion
      this.routes();
   
@@ -42,6 +45,8 @@ class Server {
 
   async conectarDD() {
     await dbConnections();
+    await loadDbCatalog();
+    console.log("✅ Catálogo de BD cargado");
   }
   //middlewares de mi app
   middleware() {
